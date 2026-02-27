@@ -66,7 +66,7 @@ const Navigation = () => {
               </>
             )}
             <Nav.Link as={Link} to="/help" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/help') ? 'active glass-card bg-primary text-white' : ''}`}>
-              <HelpCircle size={18} /> Intelligence
+              <HelpCircle size={18} /> Help and Support
             </Nav.Link>
           </Nav>
 
@@ -85,7 +85,7 @@ const Navigation = () => {
                 )}
               </>
             )}
-            <Nav.Link as={Link} to="/help" className={isActive('/help') ? 'text-primary' : ''}>Intelligence</Nav.Link>
+            <Nav.Link as={Link} to="/help" className={isActive('/help') ? 'text-primary' : ''}>Help and Support</Nav.Link>
           </Nav>
 
           <Nav className="ms-lg-4">
