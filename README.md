@@ -18,4 +18,12 @@
 - `GET /api/reservations/{id}` - View invoice
 
 ## Documentation
-- Detailed walkthrough and UML are located in the `.gemini/antigravity/brain` directory.
+- [UML Diagrams](file:///c:/Users/Thiviru/Desktop/Guest_reservation_system/docs/uml_diagrams.md) - Detailed design diagrams (Task A).
+- [Test Plan](file:///c:/Users/Thiviru/Desktop/Guest_reservation_system/docs/TEST_PLAN.md) - Rationale, data, and TDD approach (Task C).
+- [Database Schema](file:///c:/Users/Thiviru/Desktop/Guest_reservation_system/database/schema.sql) - MySQL table structures.
+
+## Usage
+- **Login Credentials**: Use the registration page to create a staff account.
+- **New Booking**: Select "New Booking" from the menu.
+- **Billing**: Click the "Invoice" icon in the "Matrix" (Reservation List) view.
+- **Help**: Access the "Intelligence" tab for staff instructions.
