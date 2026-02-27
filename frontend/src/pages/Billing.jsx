@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Container, Row, Col, Badge, Spinner } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Printer, ArrowLeft, Download, Building2, User, CreditCard, Calendar } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import api from '../services/api';
 
 const Billing = () => {
   const { id } = useParams();
   const [reservation, setReservation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const invoiceRef = React.useRef();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +38,40 @@ const Billing = () => {
     window.print();
   };
 
+  const handleExportPDF = async () => {
+    if (!invoiceRef.current) return;
+
+    setExporting(true);
+    try {
+      const element = invoiceRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#0a0a0b' // Match theme background
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Invoice_RES_${reservation.id}.pdf`);
+    } catch (err) {
+      console.error('PDF Export Error:', err);
+      alert('Failed to generate PDF. Please try printing to PDF instead.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <Container className="py-5 invoice-container">
       <div className="d-flex justify-content-between align-items-center mb-5 no-print">
@@ -44,13 +82,22 @@ const Billing = () => {
           <Button variant="outline-light" onClick={handlePrint} className="glass-card d-flex align-items-center gap-2 px-4">
             <Printer size={18} /> Print
           </Button>
-          <Button className="btn-primary d-flex align-items-center gap-2 px-4">
-            <Download size={18} /> Export PDF
+          <Button
+            className="btn-primary d-flex align-items-center gap-2 px-4"
+            onClick={handleExportPDF}
+            disabled={exporting}
+          >
+            {exporting ? (
+              <Spinner animation="border" size="sm" />
+            ) : (
+              <Download size={18} />
+            )}
+            {exporting ? 'Generating...' : 'Export PDF'}
           </Button>
         </div>
       </div>
 
-      <div className="glass-card p-5 overflow-hidden">
+      <div ref={invoiceRef} className="glass-card p-5 overflow-hidden">
         <div className="d-flex justify-content-between align-items-start mb-5 pb-4 border-bottom border-light border-opacity-10">
           <div>
             <div className="d-flex align-items-center gap-2 mb-2">

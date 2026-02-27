@@ -11,6 +11,8 @@ import Billing from './pages/Billing';
 import Help from './pages/Help';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminDashboard from './pages/AdminDashboard';
+import StaffDashboard from './pages/StaffDashboard';
 
 function App() {
   return (
@@ -22,9 +24,11 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/reservations" element={<ProtectedRoute><ReservationList /></ProtectedRoute>} />
-            <Route path="/add-reservation" element={<ProtectedRoute><AddReservation /></ProtectedRoute>} />
-            <Route path="/billing/:id" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+            <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/staff-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><StaffDashboard /></ProtectedRoute>} />
+            <Route path="/reservations" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><ReservationList /></ProtectedRoute>} />
+            <Route path="/add-reservation" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><AddReservation /></ProtectedRoute>} />
+            <Route path="/billing/:id" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><Billing /></ProtectedRoute>} />
             <Route path="/help" element={<Help />} />
           </Routes>
         </div>

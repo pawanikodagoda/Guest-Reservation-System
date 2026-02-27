@@ -18,8 +18,16 @@ const Login = () => {
     setError('');
     try {
       const response = await api.post('/auth/login', { username, password });
-      login(response.data);
-      navigate('/');
+      const userData = response.data;
+      login(userData);
+
+      if (userData.role === 'ROLE_ADMIN') {
+        navigate('/admin-dashboard');
+      } else if (userData.role === 'ROLE_STAFF') {
+        navigate('/staff-dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError('Invalid username or password');
     } finally {

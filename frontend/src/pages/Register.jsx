@@ -7,6 +7,7 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('ROLE_USER');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -23,7 +24,7 @@ const Register = () => {
 
     setLoading(true);
     try {
-      await api.post('/auth/register', { username, password });
+      await api.post('/auth/register', { username, password, role });
       setSuccess(true);
       setTimeout(() => {
         navigate('/login');
@@ -73,6 +74,19 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+            <Form.Label className="text-muted small fw-bold text-uppercase">Role</Form.Label>
+            <Form.Select
+              className="form-control-lg"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="ROLE_USER">Guest (User)</option>
+              <option value="ROLE_STAFF">Hotel Staff</option>
+              <option value="ROLE_ADMIN">System Admin</option>
+            </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-5">
