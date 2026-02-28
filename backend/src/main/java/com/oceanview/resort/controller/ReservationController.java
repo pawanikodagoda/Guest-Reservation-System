@@ -1,9 +1,13 @@
 package com.oceanview.resort.controller;
 
 import com.oceanview.resort.entity.Reservation;
+import com.oceanview.resort.entity.User;
+import com.oceanview.resort.repository.UserRepository;
 import com.oceanview.resort.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +19,25 @@ public class ReservationController {
   @Autowired
   private ReservationService reservationService;
 
+  @Autowired
+  private UserRepository userRepository;
+
   @GetMapping
-  public List<Reservation> getAllReservations() {
-    return reservationService.getAllReservations();
+  public List<Reservation> getAllReservations(Authentication authentication) {
+    String username = authentication.getName();
+    boolean isStaffOrAdmin = authentication.getAuthorities().stream()
+        .anyMatch(a -> a.getAuthority().equals("ROLE_STAFF") || a.getAuthority().equals("ROLE_ADMIN"));
+
+    if (isStaffOrAdmin) {
+      return reservationService.getAllReservations();
+    } else {
+      return reservationService.getReservationsByUsername(username);
+    }
+  }
+
+  @GetMapping("/search")
+  public List<Reservation> searchReservations(@RequestParam String query) {
+    return reservationService.searchReservations(query);
   }
 
   @GetMapping("/{id}")
@@ -26,8 +46,10 @@ public class ReservationController {
   }
 
   @PostMapping
-  public Reservation createReservation(@RequestBody Reservation reservation) {
-    return reservationService.createReservation(reservation);
+  public Reservation createReservation(@RequestBody Reservation reservation, Authentication authentication) {
+    String username = authentication.getName();
+    User user = userRepository.findByUsername(username).orElse(null);
+    return reservationService.createReservation(reservation, user);
   }
 
   @PutMapping("/{id}")

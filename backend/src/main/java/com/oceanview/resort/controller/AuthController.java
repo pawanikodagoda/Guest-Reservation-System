@@ -64,7 +64,7 @@ public class AuthController {
     User user = User.builder()
         .username(signUpRequest.getUsername())
         .password(encoder.encode(signUpRequest.getPassword()))
-        .role("ROLE_USER")
+        .role(signUpRequest.getRole() != null ? signUpRequest.getRole() : "ROLE_USER")
         .build();
 
     userRepository.save(user);

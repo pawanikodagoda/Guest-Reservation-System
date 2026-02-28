@@ -50,8 +50,15 @@ public class WebSecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll()
             .requestMatchers("/api/test/**").permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/rooms/**").permitAll()
+            .requestMatchers("/api/rooms/**").hasRole("ADMIN")
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            .requestMatchers("/api/staff/**").hasAnyRole("STAFF", "ADMIN")
+            .requestMatchers("/api/user/**").hasAnyRole("USER", "STAFF", "ADMIN")
+            .requestMatchers("/api/reservations/**").authenticated()
             .anyRequest().authenticated());
 
     http.authenticationProvider(authenticationProvider());

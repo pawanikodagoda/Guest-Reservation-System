@@ -2,6 +2,7 @@ package com.oceanview.resort.service;
 
 import com.oceanview.resort.entity.Reservation;
 import com.oceanview.resort.entity.Room;
+import com.oceanview.resort.entity.User;
 import com.oceanview.resort.exception.ResourceNotFoundException;
 import com.oceanview.resort.model.ReservationStatus;
 import com.oceanview.resort.model.RoomStatus;
@@ -26,12 +27,22 @@ public class ReservationService {
     return reservationRepository.findAll();
   }
 
+  public List<Reservation> getReservationsByUsername(String username) {
+    return reservationRepository.findByUserUsername(username);
+  }
+
+  public List<Reservation> searchReservations(String query) {
+    return reservationRepository.findByGuestFirstNameContainingIgnoreCaseOrGuestLastNameContainingIgnoreCase(query,
+        query);
+  }
+
   public Reservation getReservationById(Long id) {
     return reservationRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with id: " + id));
   }
 
-  public Reservation createReservation(Reservation reservation) {
+  public Reservation createReservation(Reservation reservation, User user) {
+    reservation.setUser(user);
     Room room = roomRepository.findById(reservation.getRoom().getId())
         .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 

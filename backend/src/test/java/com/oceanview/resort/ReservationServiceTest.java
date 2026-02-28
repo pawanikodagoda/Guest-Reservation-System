@@ -46,7 +46,7 @@ public class ReservationServiceTest {
     when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
     when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
 
-    Reservation created = reservationService.createReservation(reservation);
+    Reservation created = reservationService.createReservation(reservation, null);
 
     assertNotNull(created);
     assertEquals(new BigDecimal("200.00"), created.getTotalPrice());
