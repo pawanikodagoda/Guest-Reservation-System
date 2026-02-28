@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Badge, Container } from 'react-bootstrap';
+import { Table, Button, Badge, Container, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import {
   FileText,
@@ -10,31 +10,47 @@ import {
   User,
   Bed,
   Calendar,
-  DollarSign
+  DollarSign,
+  Filter
 } from 'lucide-react';
 import api from '../services/api';
 
 const ReservationList = () => {
   const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
-    fetchReservations();
+    fetchData();
   }, []);
 
-  const fetchReservations = async () => {
+  const fetchData = async (query = '') => {
+    if (query) setSearching(true);
+    else setLoading(true);
+
     try {
-      const response = await api.get('/reservations');
-      setReservations(response.data);
+      const endpoint = query ? `/reservations/search?query=${query}` : '/reservations';
+      const res = await api.get(endpoint);
+      setReservations(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
+      setSearching(false);
     }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchData(searchQuery);
   };
 
   const handleCancel = async (id) => {
     if (window.confirm('Are you sure you want to cancel this reservation?')) {
       try {
         await api.delete(`/reservations/${id}`);
-        fetchReservations();
+        fetchData(searchQuery);
       } catch (err) {
         console.error('Failed to cancel reservation');
       }
@@ -49,8 +65,33 @@ const ReservationList = () => {
           <p className="text-muted lead mb-0">Central repository of all operational guest data</p>
         </div>
         <Button as={Link} to="/add-reservation" className="btn-primary d-flex align-items-center gap-2">
-          <Plus size={20} /> New Intelligence booking
+          <Plus size={20} /> New Guest Booking
         </Button>
+      </div>
+
+      <div className="glass-card p-4 mb-4">
+        <form onSubmit={handleSearch} className="d-flex gap-3">
+          <div className="position-relative flex-grow-1">
+            <Search className="position-absolute top-50 translate-middle-y ms-3 text-muted" size={18} />
+            <input
+              type="text"
+              className="form-control form-control-lg ps-5 border-0 bg-white bg-opacity-5 text-white"
+              placeholder="Search by guest name (e.g. John Doe)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ borderRadius: '12px' }}
+            />
+          </div>
+          <Button type="submit" variant="primary" disabled={searching} className="px-4 rounded-3 d-flex align-items-center gap-2">
+            {searching ? <Spinner animation="border" size="sm" /> : <Filter size={18} />}
+            Search bookings
+          </Button>
+          {searchQuery && (
+            <Button variant="outline-light" onClick={() => { setSearchQuery(''); fetchData(''); }} className="px-4 rounded-3">
+              Clear
+            </Button>
+          )}
+        </form>
       </div>
 
       <div className="glass-card p-5">

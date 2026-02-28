@@ -158,8 +158,8 @@ const Billing = () => {
                     <span className="text-white">{new Date(reservation.checkInDate).toLocaleDateString()} — {new Date(reservation.checkOutDate).toLocaleDateString()}</span>
                   </div>
                 </td>
-                <td className="text-end text-white">${reservation.room.pricePerNight} / night</td>
-                <td className="text-end text-white fw-bold">${reservation.totalPrice}</td>
+                <td className="text-end text-white">Rs. {reservation.room.pricePerNight} / night</td>
+                <td className="text-end text-white fw-bold">Rs. {reservation.totalPrice}</td>
               </tr>
             </tbody>
           </Table>
@@ -169,15 +169,15 @@ const Billing = () => {
           <div className="glass-card p-4" style={{ minWidth: '320px', background: 'rgba(255,255,255,0.02)' }}>
             <div className="d-flex justify-content-between mb-3 text-muted">
               <span>Gross Subtotal</span>
-              <span className="text-white">${reservation.totalPrice}</span>
+              <span className="text-white">Rs. {reservation.totalPrice}</span>
             </div>
             <div className="d-flex justify-content-between mb-4 text-muted">
               <span>Operational Surcharge (0%)</span>
-              <span className="text-white">$0.00</span>
+              <span className="text-white">Rs. 0.00</span>
             </div>
             <div className="d-flex justify-content-between pt-4 border-top border-light border-opacity-10">
               <span className="h4 mb-0 text-white">Total Commitment</span>
-              <span className="h4 mb-0 text-primary">${reservation.totalPrice}</span>
+              <span className="h4 mb-0 text-primary">Rs. {reservation.totalPrice}</span>
             </div>
           </div>
         </div>

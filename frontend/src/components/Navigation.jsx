@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, LayoutDashboard, ClipboardList, PlusCircle, HelpCircle, Waves } from 'lucide-react';
+import { LogOut, LayoutDashboard, ClipboardList, PlusCircle, HelpCircle, Waves, Bed, Shield, Home } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Navigation = () => {
@@ -38,15 +38,21 @@ const Navigation = () => {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto bg-white bg-opacity-5 p-2 rounded-pill d-none d-lg-flex">
+            {(!user || user.role === 'ROLE_USER') && (
+              <Nav.Link as={Link} to="/rooms" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/rooms') ? 'active glass-card bg-primary text-white' : ''}`}>
+                <Bed size={18} /> Our Rooms
+              </Nav.Link>
+            )}
+
             {user && (
               <>
-                <Nav.Link as={Link} to="/" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/') ? 'active glass-card bg-primary text-white' : ''}`}>
+                <Nav.Link as={Link} to="/dashboard" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/dashboard') ? 'active glass-card bg-primary text-white' : ''}`}>
                   <LayoutDashboard size={18} /> Dashboard
                 </Nav.Link>
 
                 {user.role === 'ROLE_ADMIN' && (
                   <Nav.Link as={Link} to="/admin-dashboard" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/admin-dashboard') ? 'active glass-card bg-primary text-white' : ''}`}>
-                    <ShieldAlert size={18} /> Admin
+                    <Shield size={18} /> Admin
                   </Nav.Link>
                 )}
 
@@ -72,9 +78,12 @@ const Navigation = () => {
 
           {/* Mobile Nav Links */}
           <Nav className="d-lg-none py-3">
+            {(!user || user.role === 'ROLE_USER') && (
+              <Nav.Link as={Link} to="/rooms" className={isActive('/rooms') ? 'text-primary' : ''}>Our Rooms</Nav.Link>
+            )}
             {user && (
               <>
-                <Nav.Link as={Link} to="/" className={isActive('/') ? 'text-primary' : ''}>Dashboard</Nav.Link>
+                <Nav.Link as={Link} to="/dashboard" className={isActive('/dashboard') ? 'text-primary' : ''}>Dashboard</Nav.Link>
                 {user.role === 'ROLE_ADMIN' && <Nav.Link as={Link} to="/admin-dashboard" className={isActive('/admin-dashboard') ? 'text-primary' : ''}>Admin</Nav.Link>}
                 {(user.role === 'ROLE_STAFF' || user.role === 'ROLE_ADMIN') && (
                   <>
@@ -93,7 +102,7 @@ const Navigation = () => {
               <div className="d-flex align-items-center gap-4">
                 <div className="d-flex flex-column text-end d-none d-xl-block">
                   <span className="text-white small fw-bold">{user.username}</span>
-                  <span className="text-muted extra-small">OPERATOR</span>
+                  <span className="text-muted extra-small">{user.role.replace('ROLE_', '')}</span>
                 </div>
                 <Button
                   variant="link"

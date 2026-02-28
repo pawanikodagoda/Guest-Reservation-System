@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Table, Badge, Container, Spinner } from 'react-bootstrap';
+import { Row, Col, Table, Badge, Container, Spinner, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import {
   BarChart3,
   DoorOpen,
   CalendarCheck,
   Users,
-  ArrowUpRight,
-  RefreshCw
+  RefreshCw,
+  LogOut,
+  Info,
+  ArrowUpRight
 } from 'lucide-react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,55 +55,87 @@ const Dashboard = () => {
     <Container className="py-5">
       <div className="d-flex justify-content-between align-items-center mb-5">
         <div>
-          <h1 className="display-4 fw-bold mb-1">Intelligence Dashboard</h1>
-          <p className="text-muted lead mb-0">Unified view of your resort's operational performance</p>
+          <h1 className="display-4 fw-bold mb-1">
+            {user.role === 'ROLE_USER' ? `Welcome Back, ${user.username}` : 'Resort Dashboard'}
+          </h1>
+          <p className="text-muted lead mb-0">
+            {user.role === 'ROLE_USER'
+              ? 'Manage your luxury stay and upcoming reservations'
+              : 'Unified view of your resort\'s operational performance'}
+          </p>
         </div>
         <button onClick={fetchData} className="btn btn-outline-light rounded-circle p-3 glass-card">
           <RefreshCw size={20} className={loading ? 'spin' : ''} />
         </button>
       </div>
 
-      <Row className="mb-5 g-4">
-        <Col lg={4} md={6}>
-          <div className="glass-card stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(45, 212, 191, 0.1)', color: '#2DD4BF' }}>
-              <DoorOpen size={28} />
+      {user.role !== 'ROLE_USER' ? (
+        <Row className="mb-5 g-4">
+          <Col lg={4} md={6}>
+            <div className="glass-card stat-card">
+              <div className="stat-icon" style={{ background: 'rgba(45, 212, 191, 0.1)', color: '#2DD4BF' }}>
+                <DoorOpen size={28} />
+              </div>
+              <p className="text-muted small fw-bold text-uppercase mb-1">Available Inventory</p>
+              <h2 className="display-4 mb-2" style={{ color: '#2DD4BF' }}>{availableRooms}</h2>
+              <div className="d-flex align-items-center gap-2">
+                <Badge className="badge-success">Live</Badge>
+                <span className="small text-muted">/{rooms.length} Total Units</span>
+              </div>
             </div>
-            <p className="text-muted small fw-bold text-uppercase mb-1">Available Inventory</p>
-            <h2 className="display-4 mb-2" style={{ color: '#2DD4BF' }}>{availableRooms}</h2>
-            <div className="d-flex align-items-center gap-2">
-              <Badge className="badge-success">Live</Badge>
-              <span className="small text-muted">/{rooms.length} Total Units</span>
+          </Col>
+          <Col lg={4} md={6}>
+            <div className="glass-card stat-card">
+              <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
+                <CalendarCheck size={28} />
+              </div>
+              <p className="text-muted small fw-bold text-uppercase mb-1">Current Occupancy</p>
+              <h2 className="display-4 mb-2" style={{ color: '#3B82F6' }}>{occupiedRooms}</h2>
+              <div className="d-flex align-items-center gap-2">
+                <Badge className="badge-primary">Active</Badge>
+                <span className="small text-muted">Checked-in Guests</span>
+              </div>
             </div>
-          </div>
-        </Col>
-        <Col lg={4} md={6}>
-          <div className="glass-card stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
-              <CalendarCheck size={28} />
+          </Col>
+          <Col lg={4} md={12}>
+            <div className="glass-card stat-card">
+              <div className="stat-icon" style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#F43F5E' }}>
+                <Users size={28} />
+              </div>
+              <p className="text-muted small fw-bold text-uppercase mb-1">Total Reservations</p>
+              <h2 className="display-4 mb-2" style={{ color: '#F43F5E' }}>{reservations.length}</h2>
+              <div className="d-flex align-items-center gap-2">
+                <Badge className="badge-warning">Cumulative</Badge>
+                <span className="small text-muted">Historical Data</span>
+              </div>
             </div>
-            <p className="text-muted small fw-bold text-uppercase mb-1">Current Occupancy</p>
-            <h2 className="display-4 mb-2" style={{ color: '#3B82F6' }}>{occupiedRooms}</h2>
-            <div className="d-flex align-items-center gap-2">
-              <Badge className="badge-primary">Active</Badge>
-              <span className="small text-muted">Checked-in Guests</span>
+          </Col>
+        </Row>
+      ) : (
+        <Row className="mb-5 g-4">
+          <Col lg={6} md={6}>
+            <div className="glass-card stat-card">
+              <div className="stat-icon" style={{ background: 'rgba(45, 212, 191, 0.1)', color: '#2DD4BF' }}>
+                <CalendarCheck size={28} />
+              </div>
+              <p className="text-muted small fw-bold text-uppercase mb-1">My Bookings</p>
+              <h2 className="display-4 mb-2" style={{ color: '#2DD4BF' }}>{reservations.length}</h2>
+              <div className="d-flex align-items-center gap-2">
+                <Badge className="badge-success">Verified</Badge>
+                <span className="small text-muted">Across all timelines</span>
+              </div>
             </div>
-          </div>
-        </Col>
-        <Col lg={4} md={12}>
-          <div className="glass-card stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(244, 63, 94, 0.1)', color: '#F43F5E' }}>
-              <Users size={28} />
+          </Col>
+          <Col lg={6} md={6}>
+            <div className="glass-card stat-card d-flex flex-column align-items-center justify-content-center text-center p-4">
+              <h5 className="mb-3">Ready for a new escape?</h5>
+              <Button as={Link} to="/rooms" variant="primary" className="rounded-pill px-4">
+                Explore Our Suites
+              </Button>
             </div>
-            <p className="text-muted small fw-bold text-uppercase mb-1">Total Reservations</p>
-            <h2 className="display-4 mb-2" style={{ color: '#F43F5E' }}>{reservations.length}</h2>
-            <div className="d-flex align-items-center gap-2">
-              <Badge className="badge-warning">Cumulative</Badge>
-              <span className="small text-muted">Historical Data</span>
-            </div>
-          </div>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      )}
 
       <div className="glass-card p-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -106,11 +143,13 @@ const Dashboard = () => {
             <div className="p-2 rounded-3" style={{ background: 'rgba(165, 180, 252, 0.1)' }}>
               <BarChart3 size={24} className="text-primary" />
             </div>
-            <h3 className="h4 mb-0">Guest Activity Timeline</h3>
+            <h3 className="h4 mb-0">{user.role === 'ROLE_USER' ? 'My Recent Bookings' : 'Guest Activity Timeline'}</h3>
           </div>
-          <button className="btn btn-sm btn-link text-primary text-decoration-none fw-bold d-flex align-items-center gap-2">
-            View Analytics <ArrowUpRight size={16} />
-          </button>
+          {user.role !== 'ROLE_USER' && (
+            <button className="btn btn-sm btn-link text-primary text-decoration-none fw-bold d-flex align-items-center gap-2">
+              View Analytics <ArrowUpRight size={16} />
+            </button>
+          )}
         </div>
 
         <div className="table-responsive table-container">
@@ -155,8 +194,8 @@ const Dashboard = () => {
                 </tr>
               ))}
               {reservations.length === 0 && (
-                <tr>
-                  <td colSpan="4" className="text-center py-5">
+                <tr className="bg-transparent">
+                  <td colSpan="5" className="text-center py-5 border-0">
                     <div className="mb-3 text-muted">No operational data found for this period.</div>
                   </td>
                 </tr>

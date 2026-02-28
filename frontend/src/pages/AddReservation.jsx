@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Container, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Calendar, Home, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { UserPlus, Calendar, Home, ArrowLeft, CheckCircle2, Search, Sparkles } from 'lucide-react';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const AddReservation = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '', address: '',
     roomId: '', checkInDate: '', checkOutDate: ''
   });
   const [rooms, setRooms] = useState([]);
+  const [guests, setGuests] = useState([]);
+  const [selectedGuestId, setSelectedGuestId] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/rooms/available').then(res => setRooms(res.data));
-  }, []);
+    if (user.role !== 'ROLE_USER') {
+      api.get('/guests').then(res => setGuests(res.data));
+    }
+  }, [user.role]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,22 +32,27 @@ const AddReservation = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const guestRes = await api.post('/guests', {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address
-      });
+      let guestId = selectedGuestId;
+
+      if (!guestId) {
+        const guestRes = await api.post('/guests', {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address
+        });
+        guestId = guestRes.data.id;
+      }
 
       await api.post('/reservations', {
-        guest: { id: guestRes.data.id },
+        guest: { id: guestId },
         room: { id: formData.roomId },
         checkInDate: formData.checkInDate,
         checkOutDate: formData.checkOutDate
       });
 
-      navigate('/reservations');
+      navigate(user.role === 'ROLE_USER' ? '/' : '/reservations');
     } catch (err) {
       console.error(err);
     } finally {
@@ -63,76 +75,108 @@ const AddReservation = () => {
       <div className="glass-card p-5 mx-auto" style={{ maxWidth: '1000px' }}>
         <Form onSubmit={handleSubmit}>
           <div className="mb-5">
-            <div className="d-flex align-items-center gap-3 mb-4">
-              <div className="p-2 rounded-3" style={{ background: 'rgba(45, 212, 191, 0.1)' }}>
-                <UserPlus size={24} className="text-primary" />
+            <div className="d-flex align-items-center justify-content-between mb-4">
+              <div className="d-flex align-items-center gap-3">
+                <div className="p-2 rounded-3" style={{ background: 'rgba(45, 212, 191, 0.1)' }}>
+                  <UserPlus size={24} className="text-primary" />
+                </div>
+                <h4 className="mb-0 fw-bold">
+                  {user.role === 'ROLE_USER' ? 'Your Personal Details' : 'Guest Selection'}
+                </h4>
               </div>
-              <h4 className="mb-0 fw-bold">Guest Particulars</h4>
+              {user.role !== 'ROLE_USER' && guests.length > 0 && (
+                <div style={{ minWidth: '250px' }}>
+                  <Form.Select
+                    className="glass-card border-0 text-white"
+                    value={selectedGuestId}
+                    onChange={(e) => setSelectedGuestId(e.target.value)}
+                  >
+                    <option value="">+ New Guest Entry</option>
+                    {guests.map(g => (
+                      <option key={g.id} value={g.id}>{g.firstName} {g.lastName} ({g.phone})</option>
+                    ))}
+                  </Form.Select>
+                </div>
+              )}
             </div>
-            <Row className="g-4">
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="text-muted small fw-bold text-uppercase">Legal First Name</Form.Label>
-                  <Form.Control
-                    name="firstName"
-                    className="form-control-lg"
-                    placeholder="e.g. Alexander"
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="text-muted small fw-bold text-uppercase">Legal Last Name</Form.Label>
-                  <Form.Control
-                    name="lastName"
-                    className="form-control-lg"
-                    placeholder="e.g. Hamilton"
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="text-muted small fw-bold text-uppercase">Digital Address (Email)</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    className="form-control-lg"
-                    placeholder="guest@domain.com"
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="text-muted small fw-bold text-uppercase">Primary Contact Number</Form.Label>
-                  <Form.Control
-                    name="phone"
-                    className="form-control-lg"
-                    placeholder="+1 (555) 000-0000"
-                    onChange={handleChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={12}>
-                <Form.Group>
-                  <Form.Label className="text-muted small fw-bold text-uppercase">Residential Address</Form.Label>
-                  <Form.Control
-                    name="address"
-                    as="textarea"
-                    rows={2}
-                    className="form-control-lg"
-                    placeholder="Full street address..."
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+
+            {!selectedGuestId && (
+              <Row className="g-4">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="text-muted small fw-bold text-uppercase">Legal First Name</Form.Label>
+                    <Form.Control
+                      name="firstName"
+                      className="form-control-lg"
+                      placeholder="e.g. Alexander"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="text-muted small fw-bold text-uppercase">Legal Last Name</Form.Label>
+                    <Form.Control
+                      name="lastName"
+                      className="form-control-lg"
+                      placeholder="e.g. Hamilton"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="text-muted small fw-bold text-uppercase">Digital Address (Email)</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      className="form-control-lg"
+                      placeholder="guest@domain.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="text-muted small fw-bold text-uppercase">Primary Contact Number</Form.Label>
+                    <Form.Control
+                      name="phone"
+                      className="form-control-lg"
+                      placeholder="+1 (555) 000-0000"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label className="text-muted small fw-bold text-uppercase">Residential Address</Form.Label>
+                    <Form.Control
+                      name="address"
+                      as="textarea"
+                      rows={2}
+                      className="form-control-lg"
+                      placeholder="Full street address..."
+                      value={formData.address}
+                      onChange={handleChange}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+            )}
+            {selectedGuestId && (
+              <div className="p-4 rounded-3 bg-white bg-opacity-5 border border-dashed border-primary border-opacity-25 text-center">
+                <Sparkles size={24} className="text-primary mb-2" />
+                <p className="mb-0">Existing profile linked. Proceed to room selection.</p>
+              </div>
+            )}
           </div>
 
           <div className="mb-5">
@@ -155,7 +199,7 @@ const AddReservation = () => {
                     <option value="">Select an available suite...</option>
                     {rooms.map(r => (
                       <option key={r.id} value={r.id}>
-                        Suite {r.roomNumber} — {r.roomType.charAt(0) + r.roomType.slice(1).toLowerCase()} (${r.pricePerNight}/night)
+                        Suite {r.roomNumber} — {r.roomType.charAt(0) + r.roomType.slice(1).toLowerCase()} (Rs. {r.pricePerNight}/night)
                       </option>
                     ))}
                   </Form.Select>
@@ -199,7 +243,7 @@ const AddReservation = () => {
                 <span className="spinner-border spinner-border-sm" role="status"></span>
               ) : (
                 <>
-                  <CheckCircle2 size={20} /> Finalize Intelligence Booking
+                  <CheckCircle2 size={20} /> Finalize Guest Booking
                 </>
               )}
             </Button>
