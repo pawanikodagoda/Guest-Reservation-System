@@ -120,8 +120,8 @@ const ReservationList = () => {
             </thead>
             <tbody>
               {reservations.map(res => (
-                <tr key={res.id}>
-                  <td className="text-white fw-medium">#{res.id.toString().padStart(4, '0')}</td>
+                <tr key={res.id} style={{ background: 'rgba(30, 58, 138, 0.3)', color: '#F8FAFC' }}>
+                  <td style={{ color: '#F8FAFC', fontWeight: '600' }}>#{res.id.toString().padStart(4, '0')}</td>
                   <td>
                     <div className="fw-bold text-white">{res.guest.firstName} {res.guest.lastName}</div>
                     <div className="small text-muted">{res.guest.email}</div>

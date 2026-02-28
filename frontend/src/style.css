@@ -120,6 +120,9 @@ h5,
   border-collapse: separate;
   border-spacing: 0 8px;
   background: transparent !important;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text-main);
+  --bs-table-hover-bg: rgba(59, 130, 246, 0.15);
 }
 
 .table thead th {
@@ -134,12 +137,14 @@ h5,
 }
 
 .table tbody tr {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(30, 58, 138, 0.25) !important;
+  --bs-table-bg: rgba(30, 58, 138, 0.25);
   transition: var(--transition-smooth);
 }
 
 .table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(30, 58, 138, 0.4) !important;
+  --bs-table-bg: rgba(30, 58, 138, 0.4);
   transform: scale(1.005);
 }
 
@@ -147,6 +152,7 @@ h5,
   border: none !important;
   padding: 1.25rem 1.5rem !important;
   vertical-align: middle !important;
+  color: var(--text-main) !important;
 }
 
 .table tr td:first-child {

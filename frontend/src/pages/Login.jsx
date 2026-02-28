@@ -24,9 +24,9 @@ const Login = () => {
       if (userData.role === 'ROLE_ADMIN') {
         navigate('/admin-dashboard');
       } else if (userData.role === 'ROLE_STAFF') {
-        navigate('/staff-dashboard');
+        navigate('/dashboard');
       } else {
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (err) {
       setError('Invalid username or password');

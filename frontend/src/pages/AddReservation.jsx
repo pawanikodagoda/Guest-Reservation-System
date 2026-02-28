@@ -108,7 +108,7 @@ const AddReservation = () => {
                     <Form.Control
                       name="firstName"
                       className="form-control-lg"
-                      placeholder="e.g. Alexander"
+                      placeholder="e.g. Kasun"
                       value={formData.firstName}
                       onChange={handleChange}
                       required
@@ -121,7 +121,7 @@ const AddReservation = () => {
                     <Form.Control
                       name="lastName"
                       className="form-control-lg"
-                      placeholder="e.g. Hamilton"
+                      placeholder="e.g. Perera"
                       value={formData.lastName}
                       onChange={handleChange}
                       required
@@ -135,7 +135,7 @@ const AddReservation = () => {
                       type="email"
                       name="email"
                       className="form-control-lg"
-                      placeholder="guest@domain.com"
+                      placeholder="kasun@gmail.com"
                       value={formData.email}
                       onChange={handleChange}
                       required
@@ -148,7 +148,7 @@ const AddReservation = () => {
                     <Form.Control
                       name="phone"
                       className="form-control-lg"
-                      placeholder="+1 (555) 000-0000"
+                      placeholder="077 123 4567"
                       value={formData.phone}
                       onChange={handleChange}
                       required
@@ -163,7 +163,7 @@ const AddReservation = () => {
                       as="textarea"
                       rows={2}
                       className="form-control-lg"
-                      placeholder="Full street address..."
+                      placeholder="No. 25, Galle Road, Colombo 03..."
                       value={formData.address}
                       onChange={handleChange}
                     />

@@ -165,8 +165,8 @@ const Dashboard = () => {
             </thead>
             <tbody>
               {reservations.slice(0, 5).map(res => (
-                <tr key={res.id}>
-                  <td className="text-white fw-bold">#{res.id.toString().padStart(4, '0')}</td>
+                <tr key={res.id} style={{ background: 'rgba(30, 58, 138, 0.3)', color: '#F8FAFC' }}>
+                  <td style={{ color: '#F8FAFC', fontWeight: 'bold' }}>#{res.id.toString().padStart(4, '0')}</td>
                   <td>
                     <div className="d-flex align-items-center gap-3">
                       <div className="p-2 rounded-circle bg-dark text-primary small fw-bold" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
