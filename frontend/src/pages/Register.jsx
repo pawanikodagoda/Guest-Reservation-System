@@ -5,6 +5,7 @@ import api from '../services/api';
 
 const Register = () => {
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState('ROLE_USER');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -23,7 +24,7 @@ const Register = () => {
 
     setLoading(true);
     try {
-      await api.post('/auth/register', { username, password });
+      await api.post('/auth/register', { username, password, role });
       setSuccess(true);
       setTimeout(() => {
         navigate('/login');
@@ -61,6 +62,19 @@ const Register = () => {
               onChange={(e) => setUsername(e.target.value)}
               required
             />
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+            <Form.Label className="text-muted small fw-bold text-uppercase">Account Type</Form.Label>
+            <Form.Select
+              className="form-control-lg"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              required
+            >
+              <option value="ROLE_USER">Customer</option>
+              <option value="ROLE_STAFF">Staff</option>
+            </Form.Select>
           </Form.Group>
 
           <Form.Group className="mb-4">

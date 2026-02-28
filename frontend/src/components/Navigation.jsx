@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, LayoutDashboard, ClipboardList, PlusCircle, HelpCircle, Waves } from 'lucide-react';
+import { LogOut, LayoutDashboard, ClipboardList, PlusCircle, HelpCircle, Waves, Bed, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Navigation = () => {
@@ -11,15 +11,17 @@ const Navigation = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const isActive = (path) => location.pathname === path;
 
+  const roleLabel = user ? user.role.replace('ROLE_', '') : '';
+
   return (
     <Navbar expand="lg" sticky="top" className="navbar mb-4 py-3">
       <Container>
-        <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2">
+        <Navbar.Brand as={Link} to="/dashboard" className="d-flex align-items-center gap-2">
           <div className="stat-icon mb-0 p-2 rounded-3" style={{ width: '40px', height: '40px', background: 'var(--primary-glow)' }}>
             <Waves size={24} className="text-primary" />
           </div>
@@ -40,19 +42,46 @@ const Navigation = () => {
           <Nav className="mx-auto bg-white bg-opacity-5 p-2 rounded-pill d-none d-lg-flex">
             {user && (
               <>
-                <Nav.Link as={Link} to="/" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/') ? 'active glass-card bg-primary text-white' : ''}`}>
+                {/* Dashboard — all roles */}
+                <Nav.Link as={Link} to="/dashboard" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/dashboard') ? 'active glass-card bg-primary text-white' : ''}`}>
                   <LayoutDashboard size={18} /> Dashboard
                 </Nav.Link>
-                <Nav.Link as={Link} to="/reservations" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/reservations') ? 'active glass-card bg-primary text-white' : ''}`}>
-                  <ClipboardList size={18} /> Matrix
-                </Nav.Link>
-                <Nav.Link as={Link} to="/add-reservation" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/add-reservation') ? 'active glass-card bg-primary text-white' : ''}`}>
-                  <PlusCircle size={18} /> New Booking
-                </Nav.Link>
+
+                {/* Customer-only: Our Rooms + Make Booking */}
+                {user.role === 'ROLE_USER' && (
+                  <>
+                    <Nav.Link as={Link} to="/rooms" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/rooms') ? 'active glass-card bg-primary text-white' : ''}`}>
+                      <Bed size={18} /> Our Rooms
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/add-reservation" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/add-reservation') ? 'active glass-card bg-primary text-white' : ''}`}>
+                      <PlusCircle size={18} /> Book a Room
+                    </Nav.Link>
+                  </>
+                )}
+
+                {/* Staff + Admin */}
+                {(user.role === 'ROLE_STAFF' || user.role === 'ROLE_ADMIN') && (
+                  <>
+                    <Nav.Link as={Link} to="/reservations" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/reservations') ? 'active glass-card bg-primary text-white' : ''}`}>
+                      <ClipboardList size={18} /> All Bookings
+                    </Nav.Link>
+                    <Nav.Link as={Link} to="/add-reservation" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/add-reservation') ? 'active glass-card bg-primary text-white' : ''}`}>
+                      <PlusCircle size={18} /> New Booking
+                    </Nav.Link>
+                  </>
+                )}
+
+                {/* Admin-only */}
+                {user.role === 'ROLE_ADMIN' && (
+                  <Nav.Link as={Link} to="/manage-rooms" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/manage-rooms') ? 'active glass-card bg-primary text-white' : ''}`}>
+                    <Shield size={18} /> Manage Rooms
+                  </Nav.Link>
+                )}
               </>
             )}
+
             <Nav.Link as={Link} to="/help" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/help') ? 'active glass-card bg-primary text-white' : ''}`}>
-              <HelpCircle size={18} /> Intelligence
+              <HelpCircle size={18} /> Help
             </Nav.Link>
           </Nav>
 
@@ -60,12 +89,25 @@ const Navigation = () => {
           <Nav className="d-lg-none py-3">
             {user && (
               <>
-                <Nav.Link as={Link} to="/" className={isActive('/') ? 'text-primary' : ''}>Dashboard</Nav.Link>
-                <Nav.Link as={Link} to="/reservations" className={isActive('/reservations') ? 'text-primary' : ''}>Matrix</Nav.Link>
-                <Nav.Link as={Link} to="/add-reservation" className={isActive('/add-reservation') ? 'text-primary' : ''}>New Booking</Nav.Link>
+                <Nav.Link as={Link} to="/dashboard" className={isActive('/dashboard') ? 'text-primary' : ''}>Dashboard</Nav.Link>
+                {user.role === 'ROLE_USER' && (
+                  <>
+                    <Nav.Link as={Link} to="/rooms" className={isActive('/rooms') ? 'text-primary' : ''}>Our Rooms</Nav.Link>
+                    <Nav.Link as={Link} to="/add-reservation" className={isActive('/add-reservation') ? 'text-primary' : ''}>Book a Room</Nav.Link>
+                  </>
+                )}
+                {(user.role === 'ROLE_STAFF' || user.role === 'ROLE_ADMIN') && (
+                  <>
+                    <Nav.Link as={Link} to="/reservations" className={isActive('/reservations') ? 'text-primary' : ''}>All Bookings</Nav.Link>
+                    <Nav.Link as={Link} to="/add-reservation" className={isActive('/add-reservation') ? 'text-primary' : ''}>New Booking</Nav.Link>
+                  </>
+                )}
+                {user.role === 'ROLE_ADMIN' && (
+                  <Nav.Link as={Link} to="/manage-rooms" className={isActive('/manage-rooms') ? 'text-primary' : ''}>Manage Rooms</Nav.Link>
+                )}
               </>
             )}
-            <Nav.Link as={Link} to="/help" className={isActive('/help') ? 'text-primary' : ''}>Intelligence</Nav.Link>
+            <Nav.Link as={Link} to="/help" className={isActive('/help') ? 'text-primary' : ''}>Help</Nav.Link>
           </Nav>
 
           <Nav className="ms-lg-4">
@@ -73,7 +115,7 @@ const Navigation = () => {
               <div className="d-flex align-items-center gap-4">
                 <div className="d-flex flex-column text-end d-none d-xl-block">
                   <span className="text-white small fw-bold">{user.username}</span>
-                  <span className="text-muted extra-small">OPERATOR</span>
+                  <span className="text-muted extra-small">{roleLabel}</span>
                 </div>
                 <Button
                   variant="link"
@@ -86,8 +128,8 @@ const Navigation = () => {
               </div>
             ) : (
               <div className="d-flex align-items-center gap-3">
-                <Nav.Link as={Link} to="/login" className="text-white small fw-bold text-decoration-none">Sign In</Nav.Link>
-                <Button as={Link} to="/register" className="btn-primary py-2 px-4 shadow-sm">Authorize</Button>
+                <Nav.Link as={Link} to="/" className="text-white small fw-bold text-decoration-none">Sign In</Nav.Link>
+                <Button as={Link} to="/register" className="btn-primary py-2 px-4 shadow-sm">Sign Up</Button>
               </div>
             )}
           </Nav>
