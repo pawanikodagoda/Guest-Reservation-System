@@ -68,7 +68,7 @@ const ReservationList = () => {
           <Table className="mb-0">
             <thead>
               <tr>
-                <th><Hash size={14} className="me-1" /> Reference</th>
+                <th><Hash size={14} className="me-1" /> Res. ID</th>
                 <th><User size={14} className="me-1" /> Guest Profile</th>
                 <th><Bed size={14} className="me-1" /> Allocation</th>
                 <th><Calendar size={14} className="me-1" /> Duration</th>
