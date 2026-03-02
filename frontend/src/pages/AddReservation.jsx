@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Container, Card } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UserPlus, Calendar, Home, ArrowLeft, CheckCircle2, Search, Sparkles } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const AddReservation = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '', address: '',
-    roomId: '', checkInDate: '', checkOutDate: ''
+    roomId: location.state?.roomId || '',
+    checkInDate: '', checkOutDate: ''
   });
   const [rooms, setRooms] = useState([]);
   const [guests, setGuests] = useState([]);
   const [selectedGuestId, setSelectedGuestId] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/rooms/available').then(res => setRooms(res.data));
@@ -35,7 +38,7 @@ const AddReservation = () => {
       let guestId = selectedGuestId;
 
       if (!guestId) {
-        const guestRes = await api.post('/guests', {
+        const guestRes = await api.post('/guests/get-or-create', {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
@@ -45,16 +48,18 @@ const AddReservation = () => {
         guestId = guestRes.data.id;
       }
 
-      await api.post('/reservations', {
+      const res = await api.post('/reservations', {
         guest: { id: guestId },
         room: { id: formData.roomId },
         checkInDate: formData.checkInDate,
         checkOutDate: formData.checkOutDate
       });
 
-      navigate(user.role === 'ROLE_USER' ? '/' : '/reservations');
+      const newReservation = res.data;
+      navigate(`/billing/${newReservation.id}`);
     } catch (err) {
       console.error(err);
+      alert('Failed to process booking. Please check if all fields are correct.');
     } finally {
       setLoading(false);
     }

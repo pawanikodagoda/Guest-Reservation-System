@@ -75,7 +75,7 @@ const ReservationList = () => {
             <Search className="position-absolute top-50 translate-middle-y ms-3 text-muted" size={18} />
             <input
               type="text"
-              className="form-control form-control-lg ps-5 border-0 bg-white bg-opacity-5 text-white"
+              className="form-control form-control-lg ps-5 border-0"
               placeholder="Search by guest name (e.g. John Doe)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

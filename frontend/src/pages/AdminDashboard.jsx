@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { ShieldAlert, Users, Settings, Database, Bed } from 'lucide-react';
+import { ShieldAlert, Users, Database, Bed } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -39,15 +39,6 @@ const AdminDashboard = () => {
             </div>
             <h5 className="text-white">User Directory</h5>
             <p className="small text-muted">Manage staff accounts and permissions</p>
-          </div>
-        </Col>
-        <Col md={6} lg={4}>
-          <div className="glass-card p-4 text-center h-100">
-            <div className="stat-icon mx-auto mb-3" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}>
-              <Settings size={24} />
-            </div>
-            <h5 className="text-white">System Config</h5>
-            <p className="small text-muted">Adjust global resort parameters</p>
           </div>
         </Col>
       </Row>

@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './style.css';
 import Navigation from './components/Navigation';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -16,27 +17,45 @@ import StaffDashboard from './pages/StaffDashboard';
 import PublicRooms from './pages/PublicRooms';
 import ManageRooms from './pages/ManageRooms';
 
+// Hide the navbar on the login and register pages for a fullscreen experience
+const AppLayout = () => {
+  const location = useLocation();
+  const hideNavOn = ['/login', '/register'];
+  const showNav = !hideNavOn.includes(location.pathname);
+
+  return (
+    <>
+      {showNav && <Navigation />}
+      <div className={showNav ? 'container mt-4' : ''}>
+        <Routes>
+          {/* Default route → Login page */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/rooms" element={<PublicRooms />} />
+          <Route path="/help" element={<Help />} />
+
+          {/* Protected routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/staff-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><StaffDashboard /></ProtectedRoute>} />
+          <Route path="/manage-rooms" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><ManageRooms /></ProtectedRoute>} />
+          <Route path="/reservations" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><ReservationList /></ProtectedRoute>} />
+          <Route path="/add-reservation" element={<ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}><AddReservation /></ProtectedRoute>} />
+          <Route path="/billing/:id" element={<ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}><Billing /></ProtectedRoute>} />
+        </Routes>
+      </div>
+    </>
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Navigation />
-        <div className="container mt-4">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/rooms" element={<PublicRooms />} />
-            <Route path="/" element={<Navigate to="/rooms" replace />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><AdminDashboard /></ProtectedRoute>} />
-            <Route path="/staff-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><StaffDashboard /></ProtectedRoute>} />
-            <Route path="/manage-rooms" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><ManageRooms /></ProtectedRoute>} />
-            <Route path="/reservations" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><ReservationList /></ProtectedRoute>} />
-            <Route path="/add-reservation" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><AddReservation /></ProtectedRoute>} />
-            <Route path="/billing/:id" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><Billing /></ProtectedRoute>} />
-            <Route path="/help" element={<Help />} />
-          </Routes>
-        </div>
+        <AppLayout />
       </Router>
     </AuthProvider>
   );

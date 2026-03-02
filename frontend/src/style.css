@@ -232,3 +232,39 @@ h5,
   opacity: 1;
   color: var(--primary) !important;
 }
+
+/* Premium Inputs & Form Controls */
+.form-control,
+.form-select {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px !important;
+  color: var(--text-main) !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--primary-glow) !important;
+  color: var(--text-main) !important;
+}
+
+.form-control::placeholder {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+/* Select background fix for dark theme */
+.form-select option {
+  background-color: var(--bg-dark-alt);
+  color: var(--text-main);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.5;
+  cursor: pointer;
+}
