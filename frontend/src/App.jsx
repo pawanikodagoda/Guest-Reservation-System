@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -16,6 +17,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import StaffDashboard from './pages/StaffDashboard';
 import PublicRooms from './pages/PublicRooms';
 import ManageRooms from './pages/ManageRooms';
+import ManageUsers from './pages/ManageUsers';
 
 // Hide the navbar on the login and register pages for a fullscreen experience
 const AppLayout = () => {
@@ -42,11 +44,13 @@ const AppLayout = () => {
           <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><AdminDashboard /></ProtectedRoute>} />
           <Route path="/staff-dashboard" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><StaffDashboard /></ProtectedRoute>} />
           <Route path="/manage-rooms" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><ManageRooms /></ProtectedRoute>} />
+          <Route path="/manage-users" element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']}><ManageUsers /></ProtectedRoute>} />
           <Route path="/reservations" element={<ProtectedRoute allowedRoles={['ROLE_STAFF', 'ROLE_ADMIN']}><ReservationList /></ProtectedRoute>} />
           <Route path="/add-reservation" element={<ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}><AddReservation /></ProtectedRoute>} />
           <Route path="/billing/:id" element={<ProtectedRoute allowedRoles={['ROLE_USER', 'ROLE_STAFF', 'ROLE_ADMIN']}><Billing /></ProtectedRoute>} />
         </Routes>
       </div>
+      {showNav && <Footer />}
     </>
   );
 };

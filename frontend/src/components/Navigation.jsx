@@ -61,9 +61,11 @@ const Navigation = () => {
                     <Nav.Link as={Link} to="/reservations" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/reservations') ? 'active glass-card bg-primary text-white' : ''}`}>
                       <ClipboardList size={18} /> Matrix
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/add-reservation" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/add-reservation') ? 'active glass-card bg-primary text-white' : ''}`}>
-                      <PlusCircle size={18} /> New Booking
-                    </Nav.Link>
+                    {user.role === 'ROLE_STAFF' && (
+                      <Nav.Link as={Link} to="/add-reservation" className={`px-4 rounded-pill d-flex align-items-center gap-2 ${isActive('/add-reservation') ? 'active glass-card bg-primary text-white' : ''}`}>
+                        <PlusCircle size={18} /> New Booking
+                      </Nav.Link>
+                    )}
                   </>
                 )}
               </>
@@ -85,7 +87,9 @@ const Navigation = () => {
                 {(user.role === 'ROLE_STAFF' || user.role === 'ROLE_ADMIN') && (
                   <>
                     <Nav.Link as={Link} to="/reservations" className={isActive('/reservations') ? 'text-primary' : ''}>Matrix</Nav.Link>
-                    <Nav.Link as={Link} to="/add-reservation" className={isActive('/add-reservation') ? 'text-primary' : ''}>New Booking</Nav.Link>
+                    {user.role === 'ROLE_STAFF' && (
+                      <Nav.Link as={Link} to="/add-reservation" className={isActive('/add-reservation') ? 'text-primary' : ''}>New Booking</Nav.Link>
+                    )}
                   </>
                 )}
               </>

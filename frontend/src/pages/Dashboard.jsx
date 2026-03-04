@@ -9,7 +9,8 @@ import {
   RefreshCw,
   LogOut,
   Info,
-  ArrowUpRight
+  ArrowUpRight,
+  Bed
 } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -112,9 +113,9 @@ const Dashboard = () => {
           </Col>
         </Row>
       ) : (
-        <Row className="mb-5 g-4">
+        <Row className="mb-5 g-4 align-items-stretch">
           <Col lg={6} md={6}>
-            <div className="glass-card stat-card">
+            <div className="glass-card stat-card h-100">
               <div className="stat-icon" style={{ background: 'rgba(45, 212, 191, 0.1)', color: '#2DD4BF' }}>
                 <CalendarCheck size={28} />
               </div>
@@ -127,9 +128,12 @@ const Dashboard = () => {
             </div>
           </Col>
           <Col lg={6} md={6}>
-            <div className="glass-card stat-card d-flex flex-column align-items-center justify-content-center text-center p-4">
-              <h5 className="mb-3">Ready for a new escape?</h5>
-              <Button as={Link} to="/rooms" variant="primary" className="rounded-pill px-4">
+            <div className="glass-card stat-card h-100 text-center">
+              <div className="stat-icon mx-auto" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
+                <Bed size={28} />
+              </div>
+              <h5 className="mb-3 text-white">Ready for a new escape?</h5>
+              <Button as={Link} to="/rooms" variant="primary" className="rounded-pill px-4 shadow-sm">
                 Explore Our Suites
               </Button>
             </div>

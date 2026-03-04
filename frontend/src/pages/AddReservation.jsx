@@ -19,6 +19,7 @@ const AddReservation = () => {
   const [guests, setGuests] = useState([]);
   const [selectedGuestId, setSelectedGuestId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
 
   useEffect(() => {
     api.get('/rooms/available').then(res => setRooms(res.data));
@@ -28,11 +29,31 @@ const AddReservation = () => {
   }, [user.role]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === 'phone') {
+      // Only allow numbers and limit to 10 digits
+      const cleaned = value.replace(/\D/g, '').slice(0, 10);
+      setFormData({ ...formData, [name]: cleaned });
+
+      if (cleaned.length > 0 && !/^0\d{9}$/.test(cleaned)) {
+        setPhoneError('Please enter a valid 10-digit number starting with 0');
+      } else {
+        setPhoneError('');
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.phone && !/^0\d{9}$/.test(formData.phone)) {
+      setPhoneError('A valid 10-digit Sri Lankan phone number is required');
+      return;
+    }
+
     setLoading(true);
     try {
       let guestId = selectedGuestId;
@@ -152,12 +173,13 @@ const AddReservation = () => {
                     <Form.Label className="text-muted small fw-bold text-uppercase">Primary Contact Number</Form.Label>
                     <Form.Control
                       name="phone"
-                      className="form-control-lg"
-                      placeholder="077 123 4567"
+                      className={`form-control-lg ${phoneError ? 'is-invalid' : ''}`}
+                      placeholder="0771234567"
                       value={formData.phone}
                       onChange={handleChange}
                       required
                     />
+                    {phoneError && <Form.Control.Feedback type="invalid" className="fw-bold">{phoneError}</Form.Control.Feedback>}
                   </Form.Group>
                 </Col>
                 <Col md={12}>
