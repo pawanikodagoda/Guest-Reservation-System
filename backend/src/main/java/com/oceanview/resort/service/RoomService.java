@@ -7,6 +7,7 @@ import com.oceanview.resort.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -28,11 +29,13 @@ public class RoomService {
   }
 
   public Room createRoom(Room room) {
+    validatePrice(room.getPricePerNight());
     return roomRepository.save(room);
   }
 
   public Room updateRoom(Long id, Room roomDetails) {
     Room room = getRoomById(id);
+    validatePrice(roomDetails.getPricePerNight());
     room.setRoomNumber(roomDetails.getRoomNumber());
     room.setRoomType(roomDetails.getRoomType());
     room.setPricePerNight(roomDetails.getPricePerNight());
@@ -43,5 +46,11 @@ public class RoomService {
   public void deleteRoom(Long id) {
     Room room = getRoomById(id);
     roomRepository.delete(room);
+  }
+
+  private void validatePrice(BigDecimal pricePerNight) {
+    if (pricePerNight == null || pricePerNight.compareTo(BigDecimal.valueOf(10000)) < 0) {
+      throw new IllegalArgumentException("Room price per night must be at least Rs. 10000.00");
+    }
   }
 }

@@ -30,6 +30,11 @@ public class GuestController {
     return guestService.createGuest(guest);
   }
 
+  @PostMapping("/get-or-create")
+  public Guest getOrCreateGuest(@RequestBody Guest guest) {
+    return guestService.getOrCreateGuest(guest);
+  }
+
   @PutMapping("/{id}")
   public ResponseEntity<Guest> updateGuest(@PathVariable Long id, @RequestBody Guest guestDetails) {
     return ResponseEntity.ok(guestService.updateGuest(id, guestDetails));

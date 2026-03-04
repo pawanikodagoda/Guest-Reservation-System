@@ -26,6 +26,10 @@ public class Reservation {
   @JoinColumn(name = "room_id", nullable = false)
   private Room room;
 
+  @ManyToOne
+  @JoinColumn(name = "created_by_user_id")
+  private User createdByUser;
+
   @Column(name = "check_in_date", nullable = false)
   private LocalDate checkInDate;
 

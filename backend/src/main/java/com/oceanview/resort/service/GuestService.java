@@ -26,6 +26,18 @@ public class GuestService {
     return guestRepository.save(guest);
   }
 
+  public Guest getOrCreateGuest(Guest guest) {
+    return guestRepository.findByEmail(guest.getEmail())
+        .map(existingGuest -> {
+          existingGuest.setFirstName(guest.getFirstName());
+          existingGuest.setLastName(guest.getLastName());
+          existingGuest.setPhone(guest.getPhone());
+          existingGuest.setAddress(guest.getAddress());
+          return guestRepository.save(existingGuest);
+        })
+        .orElseGet(() -> guestRepository.save(guest));
+  }
+
   public Guest updateGuest(Long id, Guest guestDetails) {
     Guest guest = getGuestById(id);
     guest.setFirstName(guestDetails.getFirstName());

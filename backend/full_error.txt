@@ -1,0 +1,49 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.oceanview:resort >------------------------
+[INFO] Building resort 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot-maven-plugin:3.2.3:run (default-cli) > test-compile @ resort >>>
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ resort ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:compile (default-compile) @ resort ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ resort ---
+[INFO] skip non existing resourceDirectory C:\Users\Thiviru\Desktop\Guest_reservation_system\backend\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.11.0:testCompile (default-testCompile) @ resort ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 2 source files with javac [debug release 17] to target\test-classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/Users/Thiviru/Desktop/Guest_reservation_system/backend/src/test/java/com/oceanview/resort/ReservationServiceTest.java:[49,45] method createReservation in class com.oceanview.resort.service.ReservationService cannot be applied to given types;
+  required: com.oceanview.resort.entity.Reservation,java.lang.String
+  found:    com.oceanview.resort.entity.Reservation
+  reason: actual and formal argument lists differ in length
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.153 s
+[INFO] Finished at: 2026-03-02T19:15:26+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:testCompile (default-testCompile) on project resort: Compilation failure
+[ERROR] /C:/Users/Thiviru/Desktop/Guest_reservation_system/backend/src/test/java/com/oceanview/resort/ReservationServiceTest.java:[49,45] method createReservation in class com.oceanview.resort.service.ReservationService cannot be applied to given types;
+[ERROR]   required: com.oceanview.resort.entity.Reservation,java.lang.String
+[ERROR]   found:    com.oceanview.resort.entity.Reservation
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] 
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

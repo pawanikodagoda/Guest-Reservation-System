@@ -2,11 +2,13 @@ package com.oceanview.resort.service;
 
 import com.oceanview.resort.entity.Reservation;
 import com.oceanview.resort.entity.Room;
+import com.oceanview.resort.entity.User;
 import com.oceanview.resort.exception.ResourceNotFoundException;
 import com.oceanview.resort.model.ReservationStatus;
 import com.oceanview.resort.model.RoomStatus;
 import com.oceanview.resort.repository.ReservationRepository;
 import com.oceanview.resort.repository.RoomRepository;
+import com.oceanview.resort.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,19 @@ public class ReservationService {
   @Autowired
   private RoomRepository roomRepository;
 
+  @Autowired
+  private UserRepository userRepository;
+
   public List<Reservation> getAllReservations() {
-    return reservationRepository.findAll();
+    return reservationRepository.findAllByOrderByCreatedAtDesc();
+  }
+
+  public List<Reservation> getReservationsForUser(String username) {
+    return reservationRepository.findByCreatedByUserUsernameOrderByCreatedAtDesc(username);
+  }
+
+  public List<Reservation> searchReservationsByGuestName(String query) {
+    return reservationRepository.searchByGuestName(query);
   }
 
   public Reservation getReservationById(Long id) {
@@ -31,7 +44,12 @@ public class ReservationService {
         .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with id: " + id));
   }
 
-  public Reservation createReservation(Reservation reservation) {
+  public Reservation getReservationByIdForUser(Long id, String username) {
+    return reservationRepository.findByIdAndCreatedByUserUsername(id, username)
+        .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with id: " + id));
+  }
+
+  public Reservation createReservation(Reservation reservation, String createdByUsername) {
     Room room = roomRepository.findById(reservation.getRoom().getId())
         .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
@@ -45,6 +63,11 @@ public class ReservationService {
       nights = 1;
     reservation.setTotalPrice(room.getPricePerNight().multiply(BigDecimal.valueOf(nights)));
     reservation.setStatus(ReservationStatus.CONFIRMED);
+    if (createdByUsername != null && !createdByUsername.isBlank()) {
+      User createdByUser = userRepository.findByUsername(createdByUsername)
+          .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + createdByUsername));
+      reservation.setCreatedByUser(createdByUser);
+    }
 
     // Update room status
     room.setStatus(RoomStatus.OCCUPIED);
