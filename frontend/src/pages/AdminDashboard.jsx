@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Spinner, Button, Badge } from 'react-bootstrap';
-import { Users, Database, Bed, Activity, Wifi, RefreshCcw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Container, Row, Col, Button, Badge } from 'react-bootstrap';
+import { Users, Database, Bed, Activity, Wifi, RefreshCcw, KeyRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -9,7 +9,6 @@ const AdminDashboard = () => {
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    // Simulate health check
     setTimeout(() => {
       setLatency(Math.floor(Math.random() * 5) + 2);
       setIsRefreshing(false);
@@ -24,7 +23,7 @@ const AdminDashboard = () => {
       </div>
 
       <Row className="g-4">
-        <Col md={6}>
+        <Col md={4}>
           <Link to="/manage-rooms" className="text-decoration-none">
             <div className="glass-card p-4 text-center h-100 hover-card">
               <div className="stat-icon mx-auto mb-3" style={{ background: 'rgba(165, 180, 252, 0.1)', color: '#6366F1' }}>
@@ -35,14 +34,25 @@ const AdminDashboard = () => {
             </div>
           </Link>
         </Col>
-        <Col md={6}>
+        <Col md={4}>
           <Link to="/manage-users" className="text-decoration-none">
             <div className="glass-card p-4 text-center h-100 hover-card">
               <div className="stat-icon mx-auto mb-3" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}>
                 <Users size={24} />
               </div>
               <h5 className="text-white">User Directory</h5>
-              <p className="small text-muted">Manage staff accounts and permissions</p>
+              <p className="small text-muted">View and manage all system accounts</p>
+            </div>
+          </Link>
+        </Col>
+        <Col md={4}>
+          <Link to="/manage-users" className="text-decoration-none">
+            <div className="glass-card p-4 text-center h-100 hover-card">
+              <div className="stat-icon mx-auto mb-3" style={{ background: 'rgba(45, 212, 191, 0.1)', color: '#2DD4BF' }}>
+                <KeyRound size={24} />
+              </div>
+              <h5 className="text-white">Staff Credentials</h5>
+              <p className="small text-muted">Create &amp; issue login access for staff members</p>
             </div>
           </Link>
         </Col>

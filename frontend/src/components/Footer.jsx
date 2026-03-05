@@ -10,8 +10,6 @@ import {
   MapPin,
   ExternalLink,
   ChevronRight,
-  ShieldCheck,
-  Globe
 } from 'lucide-react';
 
 const Footer = () => {
@@ -22,7 +20,7 @@ const Footer = () => {
       <div className="footer-glass py-5 border-0 border-top position-relative overflow-hidden" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
         {/* Decorative background elements */}
         <div className="position-absolute top-0 end-0 p-5 opacity-10">
-          <Globe size={200} className="text-primary" />
+
         </div>
 
         <Container>
@@ -30,7 +28,7 @@ const Footer = () => {
             <Col lg={4}>
               <div className="d-flex align-items-center gap-3 mb-4">
                 <div className="p-2 rounded-3 bg-primary bg-opacity-20 shadow-glow">
-                  <ShieldCheck size={32} className="text-primary" />
+
                 </div>
                 <div>
                   <h3 className="fw-bold mb-0 text-white tracking-tight">OCEAN VIEW</h3>

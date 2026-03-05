@@ -324,3 +324,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-color: var(--primary) !important;
   background: rgba(255, 255, 255, 0.05) !important;
 }
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
